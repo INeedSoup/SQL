@@ -130,13 +130,13 @@ WHERE salary < 50000;
 ## Update using values from another table (JOIN)
 
 ```sql
-UPDATE employees e
-SET salary = e.salary + a.increase_amount
-FROM adjustments a
-WHERE e.employee_id = a.employee_id;
+UPDATE employees AS e
+JOIN adjustments AS a
+  ON e.employee_id = a.employee_id
+SET e.salary = e.salary + a.increase_amount;
 ```
 
-(Exact syntax varies by database; Postgres supports this `FROM` form. MySQL uses multi-table `UPDATE` with `JOIN`.)
+This is the MySQL multi-table `UPDATE` form. Other databases may use different syntax.
 
 ## Safety tips for UPDATE
 
@@ -153,13 +153,12 @@ COMMIT;
 -- or ROLLBACK; if something looks wrong
 ```
 3. Avoid leaving out `WHERE` unless you truly want to update all rows.
-4. Consider adding an audit/log table or using `RETURNING` (Postgres) to see changed rows:
+4. Consider adding an audit/log table. MySQL does not support PostgreSQL-style `RETURNING` for normal `UPDATE`/`DELETE`; preview rows with `SELECT` before changing them:
+
 ```sql
--- Postgres
-UPDATE employees
-SET salary = salary * 1.5
-WHERE salary < 50000
-RETURNING employee_id, name, salary;
+SELECT employee_id, name, salary
+FROM employees
+WHERE salary < 50000;
 ```
 
 
@@ -209,11 +208,12 @@ COMMIT;
     - Add column `is_deleted BOOLEAN DEFAULT FALSE` and `deleted_at TIMESTAMP`.        
     - Use `UPDATE employees SET is_deleted = TRUE, deleted_at = NOW() WHERE ...;`      
     - This preserves history and prevents accidental loss.        
-4. Some DBs support `RETURNING` to show deleted rows (Postgres):
+4. MySQL users should preview rows before deleting:
+
 ```sql
-DELETE FROM employees
+SELECT employee_id, name
+FROM employees
 WHERE status = 'terminated'
-RETURNING employee_id, name;
 ```
 
 ---
@@ -225,7 +225,7 @@ Schema:
 CREATE TABLE employees (
   employee_id INT PRIMARY KEY,
   name VARCHAR(100),
-  salary NUMERIC(10,2),
+  salary DECIMAL(10,2),
   status VARCHAR(20) DEFAULT 'active'
 );
 ```

@@ -1,9 +1,22 @@
-.obsidian/workspace
-.obsidian/workspace.json
-.obsidian/appearance.json
-.obsidian/core-plugins.json
-.obsidian/community-plugins.json
+.obsidian/
+
+# OS/editor files
 .DS_Store
 Thumbs.db
+Desktop.ini
 *.swp
+*.swo
+*.tmp
+*.bak
+
+# Logs and local exports
 *.log
+*.out
+*.dump
+
+# MySQL local/runtime artifacts
+*.err
+*.pid
+*.sock
+*.sql.gz
+*.sql.zip

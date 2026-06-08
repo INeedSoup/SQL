@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS mytable (
 
 |Type|Description|
 |---|---|
-|INTEGER, BOOLEAN|Whole numbers. Some DBs store booleans as 0/1.|
-|FLOAT, DOUBLE, REAL|Floating point values for fractions or precise measurements.|
-|CHAR(n), VARCHAR(n), TEXT|Character data. CHAR is fixed-length, VARCHAR is variable-length with a max limit. TEXT stores large strings.|
+|INT, BIGINT, BOOLEAN|Whole numbers. MySQL stores `BOOLEAN` as a tiny integer alias.|
+|DECIMAL(p,s), FLOAT, DOUBLE|Use `DECIMAL` for money and exact values; floating-point types are approximate.|
+|CHAR(n), VARCHAR(n), TEXT|Character data. `CHAR` is fixed-length, `VARCHAR` is variable-length with a max limit, and `TEXT` stores large strings.|
 |DATE, DATETIME|Store calendar dates and timestamps. Useful for logs, time-series, events.|
 |BLOB|Binary data like images or files. Stored as raw bytes.|
 
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS mytable (
 |Constraint|Meaning|
 |---|---|
 |PRIMARY KEY|Unique identifier for each row. Values must be unique and not NULL.|
-|AUTOINCREMENT|Auto-generated increasing integer (not available in every SQL engine).|
+|AUTO_INCREMENT|MySQL auto-generated increasing integer.|
 |UNIQUE|All values in the column must be unique.|
 |NOT NULL|Value cannot be NULL.|
 |CHECK (expression)|Custom rule for validation (e.g., salary > 0).|
@@ -49,11 +49,11 @@ CREATE TABLE IF NOT EXISTS mytable (
 
 ```sql
 CREATE TABLE movies (
-    id INTEGER PRIMARY KEY,
-    title TEXT,
-    director TEXT,
-    year INTEGER,
-    length_minutes INTEGER
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    director VARCHAR(255),
+    release_year INT,
+    length_minutes INT
 );
 ```
 
@@ -88,7 +88,7 @@ ADD phone VARCHAR(15) DEFAULT NULL;
 
 ## B. Removing columns
 
-Not supported in all databases (e.g., SQLite lacks simple DROP COLUMN).
+Supported in modern MySQL versions.
 
 ```sql
 ALTER TABLE mytable
@@ -159,10 +159,10 @@ Solutions:
 
 ```sql
 CREATE TABLE employees (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     role VARCHAR(50),
-    salary INTEGER CHECK (salary > 0),
+    salary INT CHECK (salary > 0),
     joined_on DATE DEFAULT CURRENT_DATE
 );
 ```
